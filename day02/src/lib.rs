@@ -1,4 +1,21 @@
-#[derive(Debug)]
+enum Outcome {
+    Lose,
+    Draw,
+    Win,
+}
+
+impl Outcome {
+    fn from_str(outcome_str: &str) -> Self {
+        match outcome_str {
+            "X" => Self::Lose,
+            "Y" => Self::Draw,
+            "Z" => Self::Win,
+            _ => panic!("Outcome {:?} not defined!", outcome_str),
+        }
+    }
+}
+
+#[derive(Clone)]
 enum Throw {
     Rock,
     Paper,
@@ -6,6 +23,22 @@ enum Throw {
 }
 
 impl Throw {
+    fn from_outcome(other: &Self, outcome: Outcome) -> Self {
+        match outcome {
+            Outcome::Lose => match other {
+                Self::Rock => Self::Scissors,
+                Self::Paper => Self::Rock,
+                Self::Scissors => Self::Paper,
+            },
+            Outcome::Draw => other.clone(),
+            Outcome::Win => match other {
+                Self::Rock => Self::Paper,
+                Self::Paper => Self::Scissors,
+                Self::Scissors => Self::Rock,
+            },
+        }
+    }
+
     fn shape(self: &Self) -> u32 {
         match self {
             Throw::Rock => 1,
@@ -36,7 +69,6 @@ impl Throw {
     }
 }
 
-#[derive(Debug)]
 pub struct Round {
     elve: Throw,
     you: Throw,
@@ -52,12 +84,7 @@ impl Round {
             "C" => Throw::Scissors,
             _ => panic!("Elve input is not valid!"),
         };
-        let you = match throws[1] {
-            "X" => Throw::Rock,
-            "Y" => Throw::Paper,
-            "Z" => Throw::Scissors,
-            _ => panic!("Your input is not valid!"),
-        };
+        let you = Throw::from_outcome(&elve, Outcome::from_str(throws[1]));
         Self { elve, you }
     }
 
@@ -72,8 +99,8 @@ mod test {
 
     #[test]
     fn score_test_plays() {
-        assert_eq!(8, Round::parse_from_line("A Y").score());
+        assert_eq!(4, Round::parse_from_line("A Y").score());
         assert_eq!(1, Round::parse_from_line("B X").score());
-        assert_eq!(6, Round::parse_from_line("C Z").score());
+        assert_eq!(7, Round::parse_from_line("C Z").score());
     }
 }
