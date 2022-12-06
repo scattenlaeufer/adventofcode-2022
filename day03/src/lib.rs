@@ -10,11 +10,11 @@ impl Rucksack {
         Rucksack { first, second }
     }
 
-    fn get_wrong_item(self: &Self) -> char {
+    fn get_wrong_item(&self) -> char {
         'a'
     }
 
-    fn get_priority(self: &Self) -> u32 {
+    fn get_priority(&self) -> u32 {
         0
     }
 }

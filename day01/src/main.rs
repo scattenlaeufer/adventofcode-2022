@@ -1,5 +1,4 @@
 use std::path::PathBuf;
-use utils;
 
 fn read_file_to_vec(file_name: PathBuf) -> Vec<Vec<i32>> {
     let mut current_elve = Vec::new();

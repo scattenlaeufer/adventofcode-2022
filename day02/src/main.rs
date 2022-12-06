@@ -1,5 +1,4 @@
 use day02::Round;
-use utils;
 
 fn main() {
     let line_vec = utils::read_file_to_line_vec("src/input".into());

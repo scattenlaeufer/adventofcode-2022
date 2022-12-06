@@ -39,7 +39,7 @@ impl Throw {
         }
     }
 
-    fn shape(self: &Self) -> u32 {
+    fn shape(&self) -> u32 {
         match self {
             Throw::Rock => 1,
             Throw::Paper => 2,
@@ -47,7 +47,7 @@ impl Throw {
         }
     }
 
-    fn score(self: &Self, other: &Self) -> u32 {
+    fn score(&self, other: &Self) -> u32 {
         self.shape()
             + match self {
                 Throw::Rock => match other {
@@ -76,7 +76,7 @@ pub struct Round {
 
 impl Round {
     pub fn parse_from_line(line: &str) -> Self {
-        let throws = line.split(" ").collect::<Vec<&str>>();
+        let throws = line.split(' ').collect::<Vec<&str>>();
 
         let elve = match throws[0] {
             "A" => Throw::Rock,
@@ -88,7 +88,7 @@ impl Round {
         Self { elve, you }
     }
 
-    pub fn score(self: &Self) -> u32 {
+    pub fn score(&self) -> u32 {
         self.you.score(&self.elve)
     }
 }
