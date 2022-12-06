@@ -45,7 +45,6 @@ pub struct Round {
 impl Round {
     pub fn parse_from_line(line: &str) -> Self {
         let throws = line.split(" ").collect::<Vec<&str>>();
-        println!("{:?}", throws);
 
         let elve = match throws[0] {
             "A" => Throw::Rock,
@@ -63,7 +62,6 @@ impl Round {
     }
 
     pub fn score(self: &Self) -> u32 {
-        println!("{:?}", self);
         self.you.score(&self.elve)
     }
 }
