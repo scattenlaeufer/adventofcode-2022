@@ -1,16 +1,11 @@
-use std::{
-    fs::File,
-    io::{BufRead, BufReader},
-};
+use std::path::PathBuf;
+use utils;
 
-fn read_file_to_vec(file_name: &str) -> Vec<Vec<i32>> {
-    let file = File::open(file_name).unwrap();
-    let reader = BufReader::new(file);
-
-    let mut result = Vec::new();
+fn read_file_to_vec(file_name: PathBuf) -> Vec<Vec<i32>> {
     let mut current_elve = Vec::new();
-    for line in reader.lines() {
-        let line = line.unwrap();
+    let mut result = Vec::new();
+    let lines_vec = utils::read_file_to_line_vec(file_name);
+    for line in lines_vec {
         if line.is_empty() {
             result.push(current_elve);
             current_elve = Vec::new();
@@ -23,7 +18,7 @@ fn read_file_to_vec(file_name: &str) -> Vec<Vec<i32>> {
 }
 
 fn main() {
-    let input_data = read_file_to_vec("src/input");
+    let input_data = read_file_to_vec("src/input".into());
     let max_calories = input_data
         .iter()
         .map(|elve| elve.iter().sum::<i32>())
