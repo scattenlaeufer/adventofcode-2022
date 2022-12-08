@@ -4,18 +4,36 @@ pub struct Rucksack {
 }
 
 impl Rucksack {
-    fn from_content(content: &str) -> Self {
-        let first = String::from("a");
-        let second = String::from("b");
+    pub fn from_content(content: &str) -> Self {
+        let pivot = content.len() / 2;
+        let first = content[0..pivot].to_string();
+        let second = content[pivot..content.len()].to_string();
         Rucksack { first, second }
     }
 
     fn get_wrong_item(&self) -> char {
-        'a'
+        for c in self.first.chars() {
+            if self.second.contains(c) {
+                return c;
+            }
+        }
+
+        for c in self.second.chars() {
+            if self.first.contains(c) {
+                return c;
+            }
+        }
+
+        panic!("Can't find a wrong item!");
     }
 
-    fn get_priority(&self) -> u32 {
-        0
+    pub fn get_priority(&self) -> u32 {
+        let wrong_item = self.get_wrong_item();
+        if wrong_item.is_lowercase() {
+            self.get_wrong_item() as u32 - 96
+        } else {
+            self.get_wrong_item() as u32 - 64 + 26
+        }
     }
 }
 
