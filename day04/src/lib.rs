@@ -23,45 +23,51 @@ impl Group {
         self.one.iter().all(|o| self.two.contains(o))
             || self.two.iter().all(|t| self.one.contains(t))
     }
+
+    pub fn they_overlap(&self) -> bool {
+        self.one.iter().any(|o| self.two.contains(o))
+            || self.two.iter().any(|t| self.one.contains(t))
+    }
 }
 
 #[cfg(test)]
 mod test {
     use super::*;
 
-    fn test_group(input: &str, expected: bool) {
+    fn test_group(input: &str, contain: bool, overlap: bool) {
         let group = Group::from_str(input);
         println!("{:#?}", &group);
-        assert_eq!(expected, group.one_contains_the_other());
+        assert_eq!(contain, group.one_contains_the_other());
+        assert_eq!(overlap, group.they_overlap());
     }
 
     #[test]
     fn group_1() {
-        test_group("2-4,6-8", false);
+        test_group("2-4,6-8", false, false);
     }
 
     #[test]
     fn group_2() {
-        test_group("2-3,4-5", false);
+        test_group("2-3,4-5", false, false);
     }
 
     #[test]
     fn group_3() {
-        test_group("5-7,7-9", false);
+        test_group("5-7,7-9", false, true);
     }
 
     #[test]
     fn group_4() {
-        test_group("2-8,3-7", true);
+        test_group("2-8,3-7", true, true);
     }
 
     #[test]
     fn group_5() {
-        test_group("6-6,4-6", true);
+        test_group("6-6,4-6", true, true);
     }
 
     #[test]
     fn group_6() {
-        test_group("2-6,4-8", false);
+        test_group("2-6,4-8", false, true);
     }
 }
