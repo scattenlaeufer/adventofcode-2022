@@ -55,10 +55,12 @@ impl Stacks {
     }
 
     fn run_directive(&mut self, directive: &Directive) {
+        let mut item_vec = Vec::new();
         for _ in 0..directive.amount {
-            let item = self.stack_vec[directive.from - 1].pop().unwrap();
-            self.stack_vec[directive.to - 1].push(item);
+            item_vec.push(self.stack_vec[directive.from - 1].pop().unwrap());
         }
+        self.stack_vec[directive.to - 1]
+            .append(&mut item_vec.iter().rev().map(|c| *c).collect::<Vec<char>>());
     }
 }
 
@@ -103,6 +105,6 @@ mod test {
         assert_eq!(vec!['M', 'C', 'D'], plan.stacks.stack_vec[1]);
         assert_eq!(vec!['P'], plan.stacks.stack_vec[2]);
 
-        assert_eq!("CMZ", plan.run());
+        assert_eq!("MCD", plan.run());
     }
 }
