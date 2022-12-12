@@ -1,3 +1,4 @@
+#[derive(Debug)]
 pub struct Rucksack {
     first: String,
     second: String,
@@ -28,12 +29,48 @@ impl Rucksack {
     }
 
     pub fn get_priority(&self) -> u32 {
-        let wrong_item = self.get_wrong_item();
-        if wrong_item.is_lowercase() {
-            self.get_wrong_item() as u32 - 96
-        } else {
-            self.get_wrong_item() as u32 - 64 + 26
+        get_priority(self.get_wrong_item())
+    }
+}
+
+#[derive(Debug)]
+pub struct Group<'a> {
+    rucksacks: [&'a Rucksack; 3],
+}
+
+impl<'a> Group<'a> {
+    pub fn new(rucksacks: [&'a Rucksack; 3]) -> Self {
+        Self { rucksacks }
+    }
+
+    fn get_common_item_type(&'a self) -> char {
+        for c in self.rucksacks[0].first.chars() {
+            if (self.rucksacks[1].first.contains(c) || self.rucksacks[1].second.contains(c))
+                && (self.rucksacks[2].first.contains(c) || self.rucksacks[2].second.contains(c))
+            {
+                return c;
+            }
         }
+        for c in self.rucksacks[0].second.chars() {
+            if (self.rucksacks[1].first.contains(c) || self.rucksacks[1].second.contains(c))
+                && (self.rucksacks[2].first.contains(c) || self.rucksacks[2].second.contains(c))
+            {
+                return c;
+            }
+        }
+        panic!("No common item found: {:?}", self);
+    }
+
+    pub fn get_priority(&'a self) -> u32 {
+        get_priority(self.get_common_item_type())
+    }
+}
+
+fn get_priority(c: char) -> u32 {
+    if c.is_lowercase() {
+        c as u32 - 96
+    } else {
+        c as u32 - 64 + 26
     }
 }
 
@@ -105,5 +142,42 @@ mod test {
     #[test]
     fn rucksack_6() {
         run_rucksack_test("CrZsJsPPZsGzwwsLwLmpwMDw", None, None, 's', 19);
+    }
+
+    fn run_group_test(contents: [&str; 3], common_item: char, priority: u32) {
+        let r1 = Rucksack::from_content(contents[0]);
+        let r2 = Rucksack::from_content(contents[1]);
+        let r3 = Rucksack::from_content(contents[2]);
+        let group = Group {
+            rucksacks: [&r1, &r2, &r3],
+        };
+        assert_eq!(common_item, group.get_common_item_type());
+        assert_eq!(priority, group.get_priority());
+    }
+
+    #[test]
+    fn group_1() {
+        run_group_test(
+            [
+                "vJrwpWtwJgWrhcsFMMfFFhFp",
+                "jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL",
+                "PmmdzqPrVvPwwTWBwg",
+            ],
+            'r',
+            18,
+        );
+    }
+
+    #[test]
+    fn group_2() {
+        run_group_test(
+            [
+                "wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn",
+                "ttgJtRGJQctTZtZT",
+                "CrZsJsPPZsGzwwsLwLmpwMDw",
+            ],
+            'Z',
+            52,
+        );
     }
 }
