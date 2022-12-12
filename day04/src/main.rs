@@ -6,14 +6,14 @@ fn main() {
         "Number of fully overlapping groups: {:?}",
         input_vec
             .iter()
-            .map(|i| Group::from_str(&i).one_contains_the_other() as u32)
+            .map(|i| Group::from_input_str(i).one_contains_the_other() as u32)
             .sum::<u32>()
     );
     println!(
         "Number of at least partially overlapping groups: {:?}",
         input_vec
             .iter()
-            .map(|i| Group::from_str(&i).they_overlap() as u32)
+            .map(|i| Group::from_input_str(i).they_overlap() as u32)
             .sum::<u32>()
     );
 }

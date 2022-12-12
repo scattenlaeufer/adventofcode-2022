@@ -6,20 +6,20 @@ pub struct Plan {
 
 impl Plan {
     pub fn from_vec(input: Vec<String>) -> Self {
-        let split = input.iter().position(|l| l == "").unwrap();
+        let split = input.iter().position(|l| l.is_empty()).unwrap();
 
         Self {
             stacks: Stacks::from_vec(&input[0..split]),
             directives: input[split + 1..input.len()]
                 .iter()
-                .map(|d| Directive::from_str(&d))
+                .map(|d| Directive::from_str(d))
                 .collect(),
         }
     }
 
     pub fn run(&mut self) -> String {
         for directive in &self.directives {
-            self.stacks.run_directive(&directive);
+            self.stacks.run_directive(directive);
         }
         self.stacks
             .stack_vec
@@ -46,7 +46,7 @@ impl Stacks {
             let chars = line.chars().collect::<Vec<char>>();
             for i in 0..n_stacks {
                 let c = chars[i * 4 + 1];
-                if !(c == ' ') {
+                if c != ' ' {
                     stacks[i].push(c);
                 }
             }
@@ -60,7 +60,7 @@ impl Stacks {
             item_vec.push(self.stack_vec[directive.from - 1].pop().unwrap());
         }
         self.stack_vec[directive.to - 1]
-            .append(&mut item_vec.iter().rev().map(|c| *c).collect::<Vec<char>>());
+            .append(&mut item_vec.iter().rev().copied().collect::<Vec<char>>());
     }
 }
 
@@ -73,7 +73,7 @@ struct Directive {
 
 impl Directive {
     fn from_str(input: &str) -> Self {
-        let input_vec = input.split(" ").collect::<Vec<&str>>();
+        let input_vec = input.split(' ').collect::<Vec<&str>>();
         Self {
             amount: input_vec[1].parse().unwrap(),
             from: input_vec[3].parse().unwrap(),

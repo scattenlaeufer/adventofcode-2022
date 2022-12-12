@@ -5,7 +5,7 @@ pub struct Group {
 }
 
 impl Group {
-    pub fn from_str(input: &str) -> Self {
+    pub fn from_input_str(input: &str) -> Self {
         let bounds = input
             .split(',')
             .map(|v| {
@@ -35,7 +35,7 @@ mod test {
     use super::*;
 
     fn test_group(input: &str, contain: bool, overlap: bool) {
-        let group = Group::from_str(input);
+        let group = Group::from_input_str(input);
         println!("{:#?}", &group);
         assert_eq!(contain, group.one_contains_the_other());
         assert_eq!(overlap, group.they_overlap());
