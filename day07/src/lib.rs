@@ -1,5 +1,8 @@
 use std::collections::HashMap;
 
+const FILE_SYSTEM_SIZE: usize = 70000000;
+pub const MIN_FREE_SPACE: usize = 30000000;
+
 #[derive(Debug)]
 enum Content {
     Directory(Directory),
@@ -95,6 +98,27 @@ impl<'b> Directory {
                 })
                 .sum::<usize>()
     }
+
+    fn get_dir_size_vec(&self) -> Vec<usize> {
+        let mut dir_size_vec = self
+            .content
+            .iter()
+            .filter_map(|(_, c)| match c {
+                Content::File(_) => None,
+                Content::Directory(d) => Some(d.get_dir_size_vec()),
+            })
+            .flatten()
+            .collect::<Vec<_>>();
+        dir_size_vec.push(self.get_dir_size());
+        dir_size_vec
+    }
+
+    pub fn get_smallest_dir_size_to_delete(&self, min_size: usize) -> usize {
+        let required_space = min_size - (FILE_SYSTEM_SIZE - self.get_dir_size());
+        let mut dir_size = self.get_dir_size_vec();
+        dir_size.sort();
+        *dir_size.iter().find(|s| *s > &required_space).unwrap()
+    }
 }
 
 #[derive(Debug)]
@@ -134,8 +158,10 @@ mod test {
             "7214296 k".into(),
         ];
         let dir = Directory::init(console_print);
-        println!("{:#?}", dir);
-        println!("{:#?}", dir.get_dir_size());
         assert_eq!(95437, dir.get_dir_size_below(100000));
+        assert_eq!(
+            24933642,
+            dir.get_smallest_dir_size_to_delete(MIN_FREE_SPACE)
+        );
     }
 }
