@@ -54,6 +54,48 @@ impl Map {
                 .map(|v| v as u32)
                 .sum::<u32>()
     }
+
+    fn get_scenic_score(&self, x: usize, y: usize) -> u32 {
+        let score_right = match self.grid[y][x + 1..self.grid[y].len()]
+            .iter()
+            .position(|h| h >= &self.grid[y][x])
+        {
+            Some(p) => p as u32 + 1,
+            None => self.grid[y][x + 1..self.grid[y].len()].len() as u32,
+        };
+        let score_left = match self.grid[y][0..x]
+            .iter()
+            .rev()
+            .position(|h| h >= &&self.grid[y][x])
+        {
+            Some(s) => s as u32 + 1,
+            None => self.grid[y][0..x].len() as u32,
+        };
+        let score_top = match self.grid[0..y]
+            .iter()
+            .rev()
+            .position(|h| h[x] >= self.grid[y][x])
+        {
+            Some(s) => s as u32 + 1,
+            None => self.grid[0..y].len() as u32,
+        };
+        let score_bottom = match self.grid[y + 1..self.grid.len()]
+            .iter()
+            .position(|h| h[x] >= self.grid[y][x])
+        {
+            Some(s) => s as u32 + 1,
+            None => self.grid[y + 1..self.grid.len()].len() as u32,
+        };
+        score_right * score_left * score_top * score_bottom
+    }
+
+    pub fn get_highest_scenic_score(&self) -> u32 {
+        (1..self.grid.len() - 1)
+            .map(|y| (1..self.grid[y].len() - 1).map(move |x| self.get_scenic_score(x, y)))
+            .flatten()
+            .max()
+            .unwrap()
+    }
 }
 
 #[cfg(test)]
@@ -81,5 +123,10 @@ mod test {
         assert_eq!(true, map.is_tree_visible(2, 3));
         assert_eq!(false, map.is_tree_visible(3, 3));
         assert_eq!(21, map.get_number_of_visible_trees());
+
+        assert_eq!(4, map.get_scenic_score(2, 1));
+        assert_eq!(6, map.get_scenic_score(1, 2));
+        assert_eq!(8, map.get_scenic_score(2, 3));
+        assert_eq!(8, map.get_highest_scenic_score());
     }
 }

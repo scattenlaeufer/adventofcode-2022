@@ -7,4 +7,8 @@ fn main() {
         "The number of visible trees is {}",
         map.get_number_of_visible_trees()
     );
+    println!(
+        "The higest scenic score is {}",
+        map.get_highest_scenic_score()
+    );
 }
